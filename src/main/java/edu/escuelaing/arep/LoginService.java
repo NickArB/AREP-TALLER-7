@@ -11,7 +11,7 @@ import java.util.Map;
  * Hello world!
  *
  */
-public class App{
+public class LoginService{
     private static Map<String,String> db = new HashMap<>();
 
     public static void main( String[] args ) throws NoSuchAlgorithmException{
