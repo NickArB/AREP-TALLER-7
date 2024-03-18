@@ -34,7 +34,7 @@ public class LoginService{
         });
 
         get("/secure/secure-resource", (request,response) ->{
-            return SecureURLReader.readURL("https://localhost:5500/secure/success", request.headers("Authorization"));
+            return SecureURLReader.readURL("https://sample-service:5000/secure/success", request.headers("Authorization"));
         });
         
         get("/", (request,response) -> {

@@ -4,6 +4,7 @@ WORKDIR /usrapp/bin
 
 ENV PORT 5000
 
+COPY /certificados /usrapp/bin/certificados
 COPY /target/classes /usrapp/bin/classes
 COPY /target/dependency /usrapp/bin/dependency
 
