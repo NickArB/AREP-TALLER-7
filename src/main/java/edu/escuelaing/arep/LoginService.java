@@ -15,21 +15,30 @@ public class LoginService{
     private static Map<String,String> db = new HashMap<>();
 
     public static void main( String[] args ) throws NoSuchAlgorithmException{
-        // secure(keystoreFilePath, keystorePassword, truststoreFilePath,truststorePassword);
         db.put("nick", SHAEncrypt("123456"));
         staticFiles.location("/public");
         secure("certificados/ecikeystore.p12", "123456", null, null); 
         port(getPort());
-        get("hello", (request, response) -> {
-            return "Hello World";
+
+        before("/secure/*", (req, res) -> {
+            String token = req.headers("Authorization");
+            System.out.println(JWTService.decodeToken(token).getSubject());
+            if (token == null || ! (db.keySet().contains(JWTService.decodeToken(token).getSubject()))) {
+                halt(401, "Not logged yet");
+                res.redirect("unauthorized.html");
+            }
         });
 
         post("/login", (request, response) -> {
             return loginIn(request.body());
         });
+
+        get("/secure/secure-resource", (request,response) ->{
+            return SecureURLReader.readURL("https://localhost:5500/secure/success", request.headers("Authorization"));
+        });
         
         get("/", (request,response) -> {
-            response.redirect("login.html"); 
+            response.redirect("login.html");
             return null;
         });
     }
@@ -59,18 +68,21 @@ public class LoginService{
         if(db.containsKey(valuesLst[0])){
             try {
                 if(db.get(valuesLst[0]).equals(SHAEncrypt(valuesLst[1]))){
-                    ans = "{\"status\":\"AUTHORIZED\"}";
+                    ans = "{\"status\":\"AUTHORIZED\",\"token\":\"" + generateTokenBySession(valuesLst[0]) + "\"}";
                 }else{
                     ans = "{\"status\":\"UNAUTHORIZED\"}";
                 }
             } catch (NoSuchAlgorithmException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }else{
             ans = "{\"status\":\"UNAUTHORIZED\"}";
         }
         return ans;
+    }
+
+    private static String generateTokenBySession(String sessionName){
+        return JWTService.generateToken(sessionName);
     }
 
     public static String SHAEncrypt(String pass) throws NoSuchAlgorithmException{

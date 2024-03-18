@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Error 401 - Unauthorized</title>
+    <link rel="stylesheet" type="text/css" href="unauthorized.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Error 401 - Unauthorized</h1>
+        <p>Lo sentimos, no estás autorizado para acceder a esta página.</p>
+        <button onclick="redirectToLogin()">Ir al login</button>
+    </div>
+
+    <script>
+        function redirectToLogin() {
+            window.location.href = "login.html";
+        }
+    </script>
+</body>
+</html>

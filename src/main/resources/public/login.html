@@ -7,7 +7,7 @@
         <link rel="stylesheet" type="text/css" href="index.css">
     </head>
     <body>
-        <h1>Please Login In</h1>
+        <h1>Please Log In</h1>
         <form>
             <label>Username:</label><br>
             <input type="text" id="userName" placeholder="Username"><br><br>
@@ -33,13 +33,27 @@
                     .then(x => x.json())
                     .then(y => {
                         if(y['status'] === 'AUTHORIZED'){
-                            window.location.replace('https://localhost:5000/hello');
+                            secureAccess(y['token']);
                         }else{
                             document.getElementById("getresp").innerHTML = "";
-                            document.getElementById("getresp").innerHTML = "YOU ARE UNAUTHORIZED!";
+                            document.getElementById("getresp").innerHTML = "WRONG USER OR PASSWORD";
                         }
                     })
                     .catch(error => console.error('Error:', error));
+            }
+
+            function secureAccess(token){
+                fetch('/secure/secure-resource', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization' : token
+                    }
+                })
+                .then(x => x.text())
+                .then(response => {
+                    document.getElementById("getresp").innerHTML = "";
+                    document.getElementById("getresp").innerHTML = response;
+                });
             }
         </script>
     </body>
