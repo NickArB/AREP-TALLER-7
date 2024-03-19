@@ -19,8 +19,17 @@ public class SampleService {
 
         before("/secure/*", (req, res) -> {
             String token = req.headers("Authorization");
-            if (token == null || ! (db.keySet().contains(JWTService.decodeToken(token).getSubject()))) {
-                halt(401, "Unauthorized");
+            System.out.println((token != null));
+            if (token != null) {
+                if(!token.equals("")){
+                    if (!(db.keySet().contains(JWTService.decodeToken(token).getSubject()))){
+                        halt(401, "You are not logged in!");
+                    }
+                }else{
+                    halt(401, "You are not logged in!");
+                }
+            }else{
+                halt(401, "You are not logged in!");
             }
         });
 

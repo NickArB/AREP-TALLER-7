@@ -22,10 +22,17 @@ public class LoginService{
 
         before("/secure/*", (req, res) -> {
             String token = req.headers("Authorization");
-            System.out.println(JWTService.decodeToken(token).getSubject());
-            if (token == null || ! (db.keySet().contains(JWTService.decodeToken(token).getSubject()))) {
-                halt(401, "Not logged yet");
-                res.redirect("unauthorized.html");
+            System.out.println((token != null));
+            if (token != null) {
+                if(!token.equals("")){
+                    if (!(db.keySet().contains(JWTService.decodeToken(token).getSubject()))){
+                        halt(401, "You are not logged in!");
+                    }
+                }else{
+                    halt(401, "You are not logged in!");
+                }
+            }else{
+                halt(401, "You are not logged in!");
             }
         });
 
@@ -33,7 +40,7 @@ public class LoginService{
             return loginIn(request.body());
         });
 
-        get("/secure/secure-resource", (request,response) ->{
+        get("secure/secure-resource", (request,response) ->{
             return SecureURLReader.readURL("https://localhost:5500/secure/success", request.headers("Authorization"));
         });
         
