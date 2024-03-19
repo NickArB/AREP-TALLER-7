@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Login</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="index.css">
+    </head>
+    <body>
+        <h1>Please Log In</h1>
+        <form>
+            <label>Username:</label><br>
+            <input type="text" id="userName" placeholder="Username"><br><br>
+            <label>Password:</label><br>
+            <input type="password" id="password" placeholder="Password"><br><br>
+            <input type="button" value="Login" onclick="callLogin(userName, password)">
+        </form>
+
+        <div id="getresp"></div>
+        <script>
+            function callLogin(userName, password){
+                let url = "/login";
+
+                var message = {user : userName.value,
+                                hashp: password.value};
+
+                fetch(url, { 
+                        method: 'POST',
+                        headers: {
+                            'Content-Type' : 'application/json'
+                        },
+                        body: JSON.stringify(message)})
+                    .then(x => x.json())
+                    .then(y => {
+                        if(y['status'] === 'AUTHORIZED'){
+                            secureAccess(y['token']);
+                        }else{
+                            document.getElementById("getresp").innerHTML = "";
+                            document.getElementById("getresp").innerHTML = "WRONG USER OR PASSWORD";
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+
+            function secureAccess(token){
+                fetch('/secure/secure-resource', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization' : token
+                    }
+                })
+                .then(x => x.text())
+                .then(response => {
+                    document.getElementById("getresp").innerHTML = "";
+                    document.getElementById("getresp").innerHTML = response;
+                });
+            }
+        </script>
+    </body>
+</html>
